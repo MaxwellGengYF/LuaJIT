@@ -48,6 +48,9 @@ target("luajit_lib")
     add_includedirs(autogendir, {public = true})
 
     add_defines("USE_LUAJIT", {public = true})
+    if is_plat("linux") then
+        add_defines("MAP_ANONYMOUS", "LJ_PROFILE_SIGPROF", "_XOPEN_SOURCE", {public = true})
+    end
 
     -- disable jit compiler?
     if not jit then
