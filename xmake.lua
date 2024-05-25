@@ -89,11 +89,10 @@ target("luajit")
 target_end()
 
 
--- target("libc")
---     _config_project({
---         project_kind = "shared"
---     })
---     add_deps("luajit_lib")
---     set_pcxxheader("libc/pch.h")
---     add_files("libc/**.cpp")
--- target_end()
+target("libc")
+    _config_project({
+        project_kind = "shared"
+    })
+    add_deps("luajit_lib")
+    add_files("libc/**.cpp")
+target_end()
