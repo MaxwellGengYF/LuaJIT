@@ -86,13 +86,5 @@ target("luajit")
     })
     add_deps("luajit_lib")
     add_files("src/luajit.c")
-target_end()
-
-
-target("libc")
-    _config_project({
-        project_kind = "shared"
-    })
-    add_deps("luajit_lib")
     add_files("libc/**.cpp")
 target_end()
