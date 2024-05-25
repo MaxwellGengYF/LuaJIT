@@ -94,46 +94,6 @@ buildvm -m vmdef -o jit\vmdef.lua %ALL_LIB%
 buildvm -m folddef -o lj_folddef.h lj_opt_fold.c
 @if errorlevel 1 goto :BAD
 
-@if "%1" neq "debug" goto :NODEBUG
-@shift
-@set LJCOMPILE=%LJCOMPILE% %DEBUGCFLAGS%
-@set LJDYNBUILD=%LJDYNBUILD_DEBUG%
-@set LJLINKTYPE=%LJLINKTYPE_DEBUG%
-:NODEBUG
-@set LJCOMPILE=%LJCOMPILE% %LJCOMPILETARGET%
-@set LJLINK=%LJLINK% %LJLINKTYPE% %LJLINKTARGET%
-@if "%1"=="amalg" goto :AMALGDLL
-@if "%1"=="static" goto :STATIC
-%LJCOMPILE% %LJDYNBUILD% lj_*.c lib_*.c
-@if errorlevel 1 goto :BAD
-%LJLINK% /DLL /out:%LJDLLNAME% lj_*.obj lib_*.obj
-@if errorlevel 1 goto :BAD
-@goto :MTDLL
-:STATIC
-%LJCOMPILE% lj_*.c lib_*.c
-@if errorlevel 1 goto :BAD
-%LJLIB% /OUT:%LJLIBNAME% lj_*.obj lib_*.obj
-@if errorlevel 1 goto :BAD
-@goto :MTDLL
-:AMALGDLL
-%LJCOMPILE% %LJDYNBUILD% ljamalg.c
-@if errorlevel 1 goto :BAD
-%LJLINK% /DLL /out:%LJDLLNAME% ljamalg.obj lj_vm.obj
-@if errorlevel 1 goto :BAD
-:MTDLL
-if exist %LJDLLNAME%.manifest^
-  %LJMT% -manifest %LJDLLNAME%.manifest -outputresource:%LJDLLNAME%;2
-
-%LJCOMPILE% luajit.c
-@if errorlevel 1 goto :BAD
-%LJLINK% /out:luajit.exe luajit.obj %LJLIBNAME%
-@if errorlevel 1 goto :BAD
-if exist luajit.exe.manifest^
-  %LJMT% -manifest luajit.exe.manifest -outputresource:luajit.exe
-
-@del *.obj *.manifest minilua.exe buildvm.exe
-@del host\buildvm_arch.h
-@del lj_bcdef.h lj_ffdef.h lj_libdef.h lj_recdef.h lj_folddef.h
 @echo.
 @echo === Successfully built LuaJIT for Windows/%LJARCH% ===
 
@@ -148,7 +108,7 @@ if exist luajit.exe.manifest^
 @echo.
 @echo *******************************************************
 @echo *** Build FAILED -- Please check the error messages ***
-@echo *******************************************************
+@echo *******************************************************
 @goto :END
 :FAIL
 @echo You must open a "Visual Studio Command Prompt" to run this script

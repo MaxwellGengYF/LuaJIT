@@ -10,7 +10,7 @@ typedef struct {
 string_view _getenv(char const *ptr);
 void *_malloc(size_t m);
 void _free(void *ptr);
-void *_ralloc(void *ptr, size_t size);
+void *_realloc(void *ptr, size_t size);
 void _memset(void *ptr, int value, size_t size);
 int _memcmp(void const *a, void const *b, size_t size);
 char _char_at(char const *ptr, size_t idx);

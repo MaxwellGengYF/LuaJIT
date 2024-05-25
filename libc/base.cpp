@@ -18,7 +18,7 @@ LUA_EXPORT_API string_view _getenv(char const *ptr) {
 }
 LUA_EXPORT_API void *_malloc(size_t m) { return lua_allocate(m); }
 LUA_EXPORT_API void _free(void *ptr) { lua_free(ptr); }
-LUA_EXPORT_API void *_ralloc(void *ptr, size_t size) { lua_realloc(ptr, size); }
+LUA_EXPORT_API void *_realloc(void *ptr, size_t size) { lua_realloc(ptr, size); }
 LUA_EXPORT_API void _memset(void *ptr, int value, size_t size) {
   memset(ptr, value, size);
 }
