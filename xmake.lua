@@ -27,19 +27,22 @@ end
 local autogendir = path.join("autogen", plat, arch)
 includes("xmake/xmake_func.lua")
 
+includes ('src/mimalloc')
 target("luajit_lib")
 
     -- make as a static library
     _config_project({
-        project_kind = "static"
+        project_kind = "shared"
     })
-
+    add_deps('mimalloc')
     add_includedirs("src", {public = true})
 
     -- add the common source files
     add_files("src/*.c|ljamalg.c|luajit.c")
     if is_plat("windows") then
         add_files(autogendir .. "/lj_vm.obj")
+        add_defines("LUA_BUILD_AS_DLL", {public = true})
+        add_defines("LUA_CORE")
     elseif is_plat("msys", "cygwin", "mingw") then
         add_files(autogendir .. "/lj_vm.o")
     else
@@ -47,7 +50,7 @@ target("luajit_lib")
     end
     add_includedirs(autogendir, {public = true})
 
-    add_defines("USE_LUAJIT", {public = true})
+    add_defines("USE_LUAJIT", "LUAJIT_USE_SYSMALLOC", {public = true})
     if is_plat("linux") then
         add_defines("MAP_ANONYMOUS", "LJ_PROFILE_SIGPROF", "_XOPEN_SOURCE", {public = true})
     end
@@ -75,10 +78,22 @@ target("luajit_lib")
     if not is_plat("windows") then
         add_cflags("-Wno-error=unused-function")
     end]]
+target_end()
 
-    target("luajit")
+target("luajit")
     _config_project({
         project_kind = "binary"
     })
     add_deps("luajit_lib")
     add_files("src/luajit.c")
+target_end()
+
+
+-- target("libc")
+--     _config_project({
+--         project_kind = "shared"
+--     })
+--     add_deps("luajit_lib")
+--     set_pcxxheader("libc/pch.h")
+--     add_files("libc/**.cpp")
+-- target_end()

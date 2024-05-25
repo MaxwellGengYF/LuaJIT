@@ -22,6 +22,7 @@
 #include "lj_trace.h"
 #include "lj_lib.h"
 #include "lj_vmevent.h"
+#include "lua_memory.h"
 
 #if LJ_TARGET_POSIX
 #include <sys/wait.h>
@@ -342,10 +343,10 @@ static void *mem_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
   (void)ud;
   (void)osize;
   if (nsize == 0) {
-    free(ptr);
+    lua_free(ptr);
     return NULL;
   } else {
-    return realloc(ptr, nsize);
+    return lua_realloc(ptr, nsize);
   }
 }
 
