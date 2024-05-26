@@ -25,7 +25,7 @@ LUA_EXPORT_API void _memset(void *ptr, int value, size_t size) {
 LUA_EXPORT_API int _memcmp(void const *a, void const *b, size_t size) {
   return memcmp(a, b, size);
 }
-LUA_EXPORT_API char _char_at(char const *ptr, size_t idx) { return ptr[idx]; }
+LUA_EXPORT_API char _char_at(char const *ptr, size_t idx) { return ptr[idx - 1]; }
 
 LUA_EXPORT_API string string_make(size_t capacity) {
   if (capacity == 0) {
@@ -110,5 +110,5 @@ LUA_EXPORT_API bool string_to_file_strview(string *s, string_view v) {
   return r;
 }
 LUA_EXPORT_API void string_set(string *s, size_t idx, char c) {
-  s->data[idx] = c;
+  s->data[idx - 1] = c;
 }

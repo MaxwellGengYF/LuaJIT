@@ -3,6 +3,11 @@ add_rules('mode.release', 'mode.debug')
 -- disable ccache in-case error
 set_policy('build.ccache', false)
 
+option("lua_custom_alloc")
+set_showmenu(true)
+set_default(false)
+option_end()
+
 -- disable jit compiler for redhat and centos
 local jit = true
 local plat = "$(plat)"
@@ -26,15 +31,20 @@ if os.isfile("/etc/redhat-release") then
 end
 local autogendir = path.join("autogen", plat, arch)
 includes("xmake/xmake_func.lua")
-
+if not get_config("lua_custom_alloc") then
 includes ('src/mimalloc')
+end
 target("luajit_lib")
 
     -- make as a static library
     _config_project({
         project_kind = "shared"
     })
-    add_deps('mimalloc')
+    if not get_config("lua_custom_alloc") then
+        add_deps('mimalloc')
+    else
+        add_defines("LUA_USE_CUSTOM_ALLOCATOR")
+    end
     add_includedirs("src", {public = true})
 
     -- add the common source files
@@ -50,19 +60,15 @@ target("luajit_lib")
     end
     add_includedirs(autogendir, {public = true})
 
-    add_defines("USE_LUAJIT", "LUAJIT_USE_SYSMALLOC", {public = true})
+    add_defines("LUAJIT_USE_SYSMALLOC", {public = true})
     if is_plat("linux") then
-        add_defines("MAP_ANONYMOUS", "LJ_PROFILE_SIGPROF", "_XOPEN_SOURCE", {public = true})
+        add_defines("MAP_ANONYMOUS")
+        add_defines("LJ_PROFILE_SIGPROF", {public = true})
     end
 
     -- disable jit compiler?
     if not jit then
         add_defines("LUAJIT_DISABLE_JIT", {public = true})
-    end
-
-    -- using internal memory management under armv7, gc will cause a crash when free strings in lua_close()
-    if arch == "arm" then
-        add_defines("LUAJIT_USE_SYSMALLOC", {public = true})
     end
 
     -- fix call math.sin/log crash for fedora/i386/lj_vm.S with `LDFLAGS = -specs=/usr/lib/rpm/redhat/redhat-hardened-ld` in xmake.spec/%set_build_flags
