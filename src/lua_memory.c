@@ -41,3 +41,4 @@ LUA_API void lua_set_allocator(void *(*lua_realloc)(void *ptr, size_t size),
   exit(1);
 }
 #endif
+LUA_API void lua_setenv(char const *env) { putenv(env); }
