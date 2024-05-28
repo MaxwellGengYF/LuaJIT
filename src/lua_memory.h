@@ -5,10 +5,6 @@
 extern "C" {
 #endif
 #include "luaconf.h"
-LUA_API void *lua_realloc(void *ptr, size_t size);
-LUA_API void lua_free(void *ptr);
-LUA_API void *lua_allocate(size_t size);
-LUA_API void *lua_aligned_allocate(size_t align, size_t size);
 LUA_API void
 lua_set_allocator(void *(*lua_realloc)(void *ptr, size_t size),
                   void (*lua_free)(void *ptr), void *(*lua_allocate)(size_t size),
